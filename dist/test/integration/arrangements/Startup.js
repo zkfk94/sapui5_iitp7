@@ -1,0 +1,1 @@
+sap.ui.define(["sap/ui/test/Opa5","zacqmu1010/localService/mockserver"],function(t,a){"use strict";return t.extend("zacqmu1010.test.integration.arrangements.Startup",{iStartMyApp:function(t){var e=t||{};e.delay=e.delay||50;var i=a.init(e);this.iWaitForPromise(i);this.iStartMyUIComponent({componentConfig:{name:"zacqmu1010",async:true},hash:e.hash,autoWait:e.autoWait})}})});

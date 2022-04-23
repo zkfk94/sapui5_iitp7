@@ -1,0 +1,181 @@
+<mvc:View
+    controllerName="zacqmu1010.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    displayBlock="true"
+    xmlns="sap.m"
+    xmlns:t="sap.ui.table"
+    xmlns:u="sap.ui.unified"
+    xmlns:f="sap.f"
+    xmlns:layout="sap.ui.layout"
+    xmlns:chart="sap.suite.ui.commons"
+    xmlns:viz="sap.viz.ui5.controls"
+    xmlns:viz.feeds="sap.viz.ui5.controls.common.feeds"
+    xmlns:viz.data="sap.viz.ui5.data"
+    height="100%"
+	width="100%"
+
+    xmlns:core="sap.ui.core"
+>
+
+    <f:DynamicPage id="dynamicPageId">
+        <!-- DynamicPage Title -->
+        <f:title>
+            <f:DynamicPageTitle>
+                <f:heading>
+                    <Title text="폐기율조회"/>
+                </f:heading>
+            </f:DynamicPageTitle>
+        </f:title>
+
+        <!-- DynamicPage Header-->  
+        <f:header>  
+            <f:DynamicPageHeader pinnable="true">
+                <Panel>
+                    <Label text="조회조건" />
+                    <FlexBox
+                            alignItems="Start"
+                            justifyContent="SpaceBetween">
+                        <items>
+                            <Panel
+                                    backgroundDesign="Transparent"
+                                    class="sapUiNoContentPadding">
+                                <content>
+                                    <layout:HorizontalLayout
+                                            allowWrapping="true">
+                                        <layout:VerticalLayout
+                                                class="sapUiMediumMarginEnd">
+                                            <Label text="연도" labelFor="fyear" />
+                                            <Input
+                                                id="fyear"
+                                                placeholder="filter year"
+                                                value="{main>/filter/tyear}">
+                                            </Input>
+                                        </layout:VerticalLayout>		                                      
+                                    </layout:HorizontalLayout>
+                                </content>
+                            </Panel>
+                            <Button
+                            text="조회"
+                            type="Emphasized"
+                            press="onSearch"
+                            width="100px"/>
+                        </items>
+                    </FlexBox>				
+                 </Panel>
+            </f:DynamicPageHeader>
+        </f:header>
+
+        <f:content>
+            <VBox weight="100%">
+                <Panel expandable="false" >
+                    <chart:ChartContainer id="chartContainer1" showFullScreen="true" showZoom="true" title="연도 및 품질검사번호별 폐기율">
+                            <chart:ChartContainerContent>
+                                <chart:content>
+                                    <viz:Popover id="idPopOver"></viz:Popover>
+                                    <viz:VizFrame id="vizFrame1" uiConfig="{applicationSet:'fiori'}" height="20rem" width="100%"
+                                        vizType="column" selectData="onPress1"
+                                        vizProperties="{title:{ text:'품질검사번호별 폐기율'}}"> 
+                                        <viz:dataset>
+                                                <viz.data:FlattenedDataset data="{main>/it_data}">
+                                                    <viz.data:dimensions>
+                                                        <viz.data:DimensionDefinition name="prueflos"
+                                                            value="{prueflos}" />
+                                                    </viz.data:dimensions>
+                                                    <viz.data:measures>
+                                                        <viz.data:MeasureDefinition name="tmonth"
+                                                            value="{tmonth}" />
+                                                        <viz.data:MeasureDefinition name="loss"
+                                                            value="{loss}" />
+                                                    </viz.data:measures>
+                                                </viz.data:FlattenedDataset>
+                                        </viz:dataset>
+
+                                            <viz:feeds>
+                                                <viz.feeds:FeedItem id='valueAxisFeed' uid="valueAxis" type="Measure"
+                                                    values="loss" />
+                                                <viz.feeds:FeedItem id='categoryAxisFeed' uid="categoryAxis" type="Dimension"
+                                                    values="prueflos" />
+                                            </viz:feeds>
+                                    </viz:VizFrame>
+                                </chart:content>
+                            </chart:ChartContainerContent>
+                        </chart:ChartContainer>
+                    </Panel>
+                    
+                <!-- donut chart -->
+                <HBox justifyContent="SpaceBetween">
+                        <Panel expandable="false">
+                            <chart:ChartContainer id="chartContainer2" showFullScreen="true" showZoom="true" title="합격/불합격 비율">
+                            <chart:ChartContainerContent>
+                                <chart:content>
+                                    <viz:Popover id="idPopOverDonut"></viz:Popover>
+                                        <viz:VizFrame id="idVizFrame2" uiConfig="{applicationSet:'fiori'}"
+                                        height="20rem" width="100%" vizType="donut" selectData="onPress2"
+                                        vizProperties="{plotArea: { drawingEffect: 'glossy' },title:{ text:'합격/불합격'}}">
+                                        <viz:dataset>
+                                            <viz.data:FlattenedDataset data="{main>/it_data2}">
+                                                <viz.data:dimensions>
+                                                    <viz.data:DimensionDefinition name="qm_result_t"
+                                                        value="{qm_result_t}" />
+                                                </viz.data:dimensions>
+                                                <viz.data:measures>
+                                                    <viz.data:MeasureDefinition name="total"
+                                                        value="{total}" />
+                                                </viz.data:measures>
+                                            </viz.data:FlattenedDataset>
+                                        </viz:dataset>
+
+                                        <viz:feeds>
+                                            <viz.feeds:FeedItem uid="size" type="Measure"
+                                                values="total" />
+                                            <viz.feeds:FeedItem uid="color" type="Dimension"
+                                                values="qm_result_t" />
+                                        </viz:feeds>
+                                    </viz:VizFrame>
+                                </chart:content>
+                            </chart:ChartContainerContent>
+                        </chart:ChartContainer>
+                    </Panel>
+
+                <!-- Table -->
+                    <Panel>
+                        <Table id="idTable3" items="{main>/it_data3}">
+                            <columns>
+                                <Column width="15em">
+                                    <header>
+                                        <Text text="시리얼 번호"></Text>
+                                    </header>
+                                </Column>
+                                <Column width="10em">
+                                    <header>
+                                        <Text text="제품코드"></Text>
+                                    </header>
+                                </Column>
+                                <Column>
+                                    <header>
+                                        <Text text="검수완료일"></Text>
+                                    </header>
+                                </Column>
+                                <Column>
+                                    <header>
+                                        <Text text="불합격사유"></Text>
+                                    </header>
+                                </Column>
+                            </columns>
+                            <items>
+                                <ColumnListItem press="onSelectH" vAlign="Middle">
+                                    <cells>
+                                        <Text text="{main>serial}"></Text>
+                                        <Text text="{main>matnr}"></Text>
+                                        <Text text="{main>comp_date}"></Text>
+                                        <Text text="{main>rmess}"></Text>
+                                    </cells>
+                                </ColumnListItem>
+                            </items>
+                        </Table>
+                    </Panel>
+            </HBox>
+        </VBox>
+        </f:content>     
+    </f:DynamicPage>
+</mvc:View>
